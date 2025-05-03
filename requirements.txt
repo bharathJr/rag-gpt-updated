@@ -1,6 +1,8 @@
 streamlit
-openai
 langchain
+openai
 faiss-cpu
+tiktoken
 python-dotenv
-unstructured[all]
+PyPDF2
+docx2txt
