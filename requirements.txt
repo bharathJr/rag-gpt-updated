@@ -1,0 +1,6 @@
+streamlit
+openai
+langchain
+faiss-cpu
+python-dotenv
+unstructured[all]
