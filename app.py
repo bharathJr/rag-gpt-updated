@@ -1,7 +1,9 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-from langchain.vectorstores import FAISS
+from langchain.vectorstores import Chroma
+db = Chroma.from_documents(docs, embeddings, persist_directory="chroma_db")
+retriever = db.as_retriever()
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
