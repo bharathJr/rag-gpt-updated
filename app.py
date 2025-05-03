@@ -1,9 +1,7 @@
 import os
 import streamlit as st
 from dotenv import load_dotenv
-from langchain.vectorstores import Chroma
-db = Chroma.from_documents(docs, embeddings, persist_directory="chroma_db")
-retriever = db.as_retriever()
+from langchain.vectorstores import FAISS
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
@@ -24,6 +22,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 uploaded_files = st.sidebar.file_uploader("Upload files", type=["pdf", "txt", "docx"], accept_multiple_files=True)
 
 # --- File Handling ---
+embeddings = OpenAIEmbeddings()
 if uploaded_files:
     documents = []
     for file in uploaded_files:
@@ -38,13 +37,10 @@ if uploaded_files:
     chunks = splitter.split_documents(documents)
 
     # Load or create vector database
-    embeddings = OpenAIEmbeddings()
-    if os.path.exists("vectorstore.index"):
-        # If the vector store exists, load it
+    if os.path.exists("vectorstore/index.faiss"):
         db = FAISS.load_local("vectorstore", embeddings)
-        db.add_documents(chunks)  # Add new documents to the existing vector store
+        db.add_documents(chunks)
     else:
-        # If no vector store exists, create one
         db = FAISS.from_documents(chunks, embeddings)
 
     # Save vector database
@@ -52,8 +48,12 @@ if uploaded_files:
     st.sidebar.success("✅ Files uploaded and indexed!")
 
 # --- Load Vector DB ---
-db = FAISS.load_local("vectorstore", embeddings)
-retriever = db.as_retriever()
+if os.path.exists("vectorstore/index.faiss"):
+    db = FAISS.load_local("vectorstore", embeddings)
+    retriever = db.as_retriever()
+else:
+    retriever = None
+    st.warning("Upload and index documents to enable chat.")
 
 # --- Chat Memory ---
 if "chat_history" not in st.session_state:
@@ -62,12 +62,11 @@ if "chat_history" not in st.session_state:
 # --- Chat UI ---
 query = st.text_input("💬 Ask a question about FSM...")
 
-if query:
+if query and retriever:
     llm = ChatOpenAI(temperature=0)
     qa = ConversationalRetrievalChain.from_llm(llm, retriever=retriever)
 
     result = qa({"question": query, "chat_history": st.session_state.chat_history})
-
     st.session_state.chat_history.append((query, result["answer"]))
 
 # --- Show Chat History ---
