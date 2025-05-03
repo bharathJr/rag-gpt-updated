@@ -7,6 +7,11 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import UnstructuredFileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.document_loaders import PDFMinerLoader
+
+loader = PDFMinerLoader(file_path)
+documents.extend(loader.load())
+
 
 load_dotenv()
 st.set_page_config(page_title="FSM Chatbot", layout="wide")
