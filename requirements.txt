@@ -6,4 +6,5 @@ openai
 python-dotenv
 tiktoken
 PyPDF2
+unstructured
 docx2txt
