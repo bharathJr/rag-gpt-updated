@@ -6,6 +6,7 @@ openai
 python-dotenv
 tiktoken
 PyPDF2
+pdfminer.six
 unstructured[pdf]
 unstructured
 docx2txt
