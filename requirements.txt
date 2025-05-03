@@ -1,8 +1,9 @@
 streamlit
 langchain
-openai
+langchain-community
 chromadb
-tiktoken
+openai
 python-dotenv
+tiktoken
 PyPDF2
 docx2txt
