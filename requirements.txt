@@ -1,7 +1,7 @@
 streamlit
 langchain
 openai
-faiss-cpu
+chromadb
 tiktoken
 python-dotenv
 PyPDF2
